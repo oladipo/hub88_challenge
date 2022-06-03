@@ -31,4 +31,4 @@ jobs:
     - name: Install dependencies
       run: cd challenge && mix deps.get
     - name: Run tests
-      run: mix test
+      run: cd challenge && mix test

@@ -215,6 +215,14 @@ defmodule ChallengeTest do
                currency: _currency,
                balance: _balance
              } = Challenge.bet(server_pid, %{})
+
+      assert %{
+               user: _user,
+               status: "RS_ERROR_WRONG_TYPES",
+               request_uuid: _request_uuid,
+               currency: _currency,
+               balance: _balance
+             } = Challenge.bet(server_pid, %{user: "", amount: 403.9, request_uuid: ""})
     end
   end
 
@@ -376,6 +384,14 @@ defmodule ChallengeTest do
                currency: _currency,
                balance: _balance
              } = Challenge.win(server_pid, %{})
+
+      assert %{
+               user: _user,
+               status: "RS_ERROR_WRONG_TYPES",
+               request_uuid: _request_uuid,
+               currency: _currency,
+               balance: _balance
+             } = Challenge.win(server_pid, %{user: "", amount: 403.9, request_uuid: ""})
     end
   end
 end

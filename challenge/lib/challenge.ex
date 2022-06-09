@@ -12,7 +12,7 @@ defmodule Challenge do
       {Challenge.Supervisor, strategy: :one_for_one, name: Challenge.DynamicSupervisor}
     ]
 
-    opts = [strategy: :one_for_one, name: RoundUp.Supervisor]
+    opts = [strategy: :one_for_one, name: Challenge.Supervisor]
 
     {:ok, pid} = Supervisor.start_link(children, opts)
 

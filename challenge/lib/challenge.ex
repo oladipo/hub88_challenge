@@ -9,12 +9,14 @@ defmodule Challenge do
   @spec start :: GenServer.server()
   def start() do
     children = [
-      {Challenge.Supervisor, strategy: :one_for_one, name: Challenge.DynamicSupervisor}
+      Challenge.DynamicSupervisor
     ]
 
     opts = [strategy: :one_for_one, name: Challenge.Supervisor]
 
-    {:ok, pid} = Supervisor.start_link(children, opts)
+    {:ok, _} = Supervisor.start_link(children, opts)
+
+    {:ok, pid} = Challenge.DynamicSupervisor.start_worker(:worker_1)
 
     pid
   end

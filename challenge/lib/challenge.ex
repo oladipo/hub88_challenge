@@ -8,8 +8,13 @@ defmodule Challenge do
   """
   @spec start :: GenServer.server()
   def start() do
-    {:ok, pid} = GenServer.start_link(Challenge.Worker, [])
+    children = [
+      Challenge.Worker
+    ]
 
+    opts = [strategy: :one_for_one, name: RoundUp.Supervisor]
+    
+	Supervisor.start_link(children, opts)
     pid
   end
 

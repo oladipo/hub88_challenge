@@ -88,7 +88,8 @@ defmodule Challenge.Worker do
            bet_attrs,
          %{users: users} = state
        ) do
-    with [user_map] <- Enum.filter(users, &(&1.ref == user)),
+    with [%{amount: _amount, currency: _currency, ref: _ref} = user_map] <-
+           Enum.filter(users, &(&1.ref == user)),
          :ok <- check_transaction(bet_attrs, state, user_map),
          {:ok, %{user: %{amount: updated_balance}, users: updated_users}} <-
            update_user_state(user_map, users, bet_attrs, operation: :debit) do

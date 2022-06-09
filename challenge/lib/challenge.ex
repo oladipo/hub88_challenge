@@ -41,7 +41,18 @@ defmodule Challenge do
   """
   @spec bet(server :: GenServer.server(), body :: map) :: map
   def bet(server, %{user: _user, amount: _amount, request_uuid: _request_uuid} = body) do
-    GenServer.call(server, {:bet, body})
+    with :ok <- validate_bet_params(body) do
+      GenServer.call(server, {:bet, body})
+    else
+      _ ->
+        %{
+          user: nil,
+          status: "RS_ERROR_WRONG_TYPES",
+          request_uuid: nil,
+          currency: nil,
+          balance: nil
+        }
+    end
   end
 
   def bet(_server, _),
@@ -72,4 +83,18 @@ defmodule Challenge do
       currency: nil,
       balance: nil
     }
+
+  defp validate_bet_params(%{user: user, amount: amount, request_uuid: request_uuid}) do
+    with true <- validate_user(user),
+         true <- validate_request_uuid(request_uuid),
+         true <- validate_amount(amount) do
+      :ok
+    else
+      _ -> {:error, :invalid}
+    end
+  end
+
+  defp validate_user(param), do: String.length(param) > 0
+  defp validate_request_uuid(param), do: String.length(param) > 0
+  defp validate_amount(amount), do: is_integer(amount)
 end

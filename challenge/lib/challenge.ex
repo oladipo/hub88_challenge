@@ -72,7 +72,18 @@ defmodule Challenge do
   """
   @spec win(server :: GenServer.server(), body :: map) :: map
   def win(server, %{user: _user, amount: _amount, request_uuid: _request_uuid} = body) do
-    GenServer.call(server, {:win, body})
+    with :ok <- validate_win_params(body) do
+      GenServer.call(server, {:win, body})
+    else
+      _ ->
+        %{
+          user: nil,
+          status: "RS_ERROR_WRONG_TYPES",
+          request_uuid: nil,
+          currency: nil,
+          balance: nil
+        }
+    end
   end
 
   def win(_server, _),
@@ -85,6 +96,16 @@ defmodule Challenge do
     }
 
   defp validate_bet_params(%{user: user, amount: amount, request_uuid: request_uuid}) do
+    with true <- validate_user(user),
+         true <- validate_request_uuid(request_uuid),
+         true <- validate_amount(amount) do
+      :ok
+    else
+      _ -> {:error, :invalid}
+    end
+  end
+
+  defp validate_win_params(%{user: user, amount: amount, request_uuid: request_uuid}) do
     with true <- validate_user(user),
          true <- validate_request_uuid(request_uuid),
          true <- validate_amount(amount) do
